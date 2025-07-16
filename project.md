@@ -12,7 +12,7 @@ ${{ github:> }}* ... this image is automatically scanned for CVEs before and aft
 ${{ github:> }}* ... this image is created via a secure and pinned CI/CD process
 ${{ github:> }}* ... this image is very small
 
-If you value security, simplicity and optimizations to the extreme, then this image might be for you.ECRET=
+If you value security, simplicity and optimizations to the extreme, then this image might be for you.
 
 ${{ content_comparison }}
 
@@ -21,6 +21,7 @@ ${{ content_compose }}
 ${{ content_defaults }}
 
 ${{ content_environment }}
+| `DISABLE_CONTINUE` | Disables the continue button after successful auth | true |
 
 ${{ content_source }}
 
