@@ -1,0 +1,84 @@
+name: "proxy"
+services:
+  tinyauth:
+    image: "11notes/tinyauth:3.6.0"
+    read_only: true
+    environment:
+      APP_URL: "https://${FQDN_TINYAUTH}"
+      # secret must be a 32 Byte long string (32 characters)
+      SECRET: ${SECRET}
+      # admin / admin, please do not use in production!
+      USERS: "admin:$$2y$$12$$zzekhr74SUez9vo8TK2Be.mJ4EMX44k7whOogQo4F/2i84a6Rl6U6"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tinyauth.rule=Host(`${FQDN_TINYAUTH}`)"
+      - "traefik.http.routers.tinyauth.entrypoints=https"
+      - "traefik.http.routers.tinyauth.tls=true"
+      - "traefik.http.routers.tinyauth.service=tinyauth"
+      - "traefik.http.services.tinyauth.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.tinyauth.forwardauth.address=http://tinyauth:3000/api/auth/traefik"
+    networks:
+      backend:
+
+  # this iamge is used to expose the docker socket rootless, distroless and read-only
+  # you can find out more on https://github.com/11notes/docker-socket-proxy
+  socket-proxy:
+    image: "11notes/socket-proxy:2.1.3"
+    read_only: true
+    user: "0:108"
+    volumes:
+      - "/run/docker.sock:/run/docker.sock:ro"
+      - "socket-proxy:/run/proxy"
+    restart: "always"
+
+  traefik:
+    image: "11notes/traefik:3.2.0"
+    depends_on:
+      socket-proxy:
+        condition: "service_healthy"
+        restart: true
+    command:
+      # this is an example configuration, do not use in production
+      # consult https://github.com/11notes/docker-traefik for a proper and save config!
+      - "--global.checkNewVersion=false"
+      - "--global.sendAnonymousUsage=false"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--log.level=INFO"
+      - "--log.format=json"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "8080:8080/tcp"
+    networks:
+      frontend:
+      backend:
+    volumes:
+      - "socket-proxy:/var/run"
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 80
+    restart: "always"
+
+  whoami:
+    image: "traefik/whoami:latest"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`${FQDN_WHOAMI}`)"
+      - "traefik.http.routers.whoami.entrypoints=https"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.middlewares=tinyauth"
+      - "traefik.http.routers.whoami.service=whoami"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+    networks:
+      backend:
+
+volumes:
+  socket-proxy:
+
+networks:
+  frontend:
+  backend:
+    internal: true
