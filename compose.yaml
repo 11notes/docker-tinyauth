@@ -1,7 +1,7 @@
 name: "proxy"
 services:
   tinyauth:
-    image: "11notes/tinyauth:3.6.0"
+    image: "11notes/tinyauth:3.6.1"
     read_only: true
     environment:
       APP_URL: "https://${FQDN_TINYAUTH}"
@@ -25,7 +25,7 @@ services:
   socket-proxy:
     image: "11notes/socket-proxy:2.1.3"
     read_only: true
-    user: "0:108"
+    user: "0:0"
     volumes:
       - "/run/docker.sock:/run/docker.sock:ro"
       - "socket-proxy:/run/proxy"
