@@ -25,7 +25,7 @@ Tinyauth is a simple authentication middleware that adds a simple login screen o
 >* ... this image is created via a secure and pinned CI/CD process
 >* ... this image is very small
 
-If you value security, simplicity and optimizations to the extreme, then this image might be for you.ECRET=
+If you value security, simplicity and optimizations to the extreme, then this image might be for you.
 
 # COMPARISON 🏁
 Below you find a comparison between this image and the most used or original one.
@@ -139,6 +139,7 @@ networks:
 | --- | --- | --- |
 | `TZ` | [Time Zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) | |
 | `DEBUG` | Will activate debug option for container image and app (if available) | |
+| `DISABLE_CONTINUE` | Disables the continue button after successful auth | true |
 
 # MAIN TAGS 🏷️
 These are the main tags for the image. There is also a tag for each commit and its shorthand sha256 value.
@@ -182,4 +183,4 @@ docker pull quay.io/11notes/tinyauth:3.6.0
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 16.07.2025, 21:26:47 (CET)*
+*created 16.07.2025, 22:40:38 (CET)*
