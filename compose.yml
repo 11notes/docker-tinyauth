@@ -1,7 +1,7 @@
 name: "proxy"
 services:
   tinyauth:
-    image: "11notes/tinyauth:3.6.1"
+    image: "11notes/tinyauth:3.6.2"
     read_only: true
     environment:
       APP_URL: "https://${FQDN_TINYAUTH}"

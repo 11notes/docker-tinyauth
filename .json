@@ -3,7 +3,7 @@
   "name": "tinyauth",
   "root": "/tinyauth",
   "semver": {
-    "version": "3.6.1"
+    "version": "3.6.2"
   },
   "readme": {
     "description": "Run tinyauth rootless, distroless and truly tiny.",
