@@ -82,7 +82,7 @@
 
   # :: multi-stage
     COPY --from=distroless / /
-    COPY --from=distroless-curl / /
+    COPY --from=distroless-localhealth / /
     COPY --from=build /distroless/ /
 
 # :: HEALTH
