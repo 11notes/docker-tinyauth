@@ -30,13 +30,10 @@ If you value security, simplicity and optimizations to the extreme, then this im
 # COMPARISON 🏁
 Below you find a comparison between this image and the most used or original one.
 
-| **image** | 11notes/tinyauth:3.6.2 | ghcr.io/steveiliop56/tinyauth |
-| ---: | :---: | :---: |
-| **image size on disk** | 9.16MB | 33.2MB |
-| **process UID/GID** | 1000/1000 | 0/0 |
-| **distroless?** | ✅ | ❌ |
-| **rootless?** | ✅ | ❌ |
-
+| **image** | **size on disk** | **init default as** | **[distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md)** | supported architectures
+| ---: | ---: | :---: | :---: | :---: |
+| 11notes/tinyauth:3.6.2 | 9MB | 1000:1000 | ✅ | amd64, arm64 |
+| steveiliop56/tinyauth | 33MB | 0:0 | ❌ | arm64, amd64 |
 
 # COMPOSE ✂️
 ```yaml
@@ -166,7 +163,7 @@ docker pull quay.io/11notes/tinyauth:3.6.2
 >This image is not based on another image but uses [scratch](https://hub.docker.com/_/scratch) as the starting layer.
 >The image consists of the following distroless layers that were added:
 >* [11notes/distroless](https://github.com/11notes/docker-distroless/blob/master/arch.dockerfile) - contains users, timezones and Root CA certificates
->* [11notes/distroless:curl](https://github.com/11notes/docker-distroless/blob/master/curl.dockerfile) - app to execute HTTP requests
+>* [11notes/distroless:localhealth](https://github.com/11notes/docker-distroless/blob/master/localhealth.dockerfile) - app to execute HTTP requests only on 127.0.0.1
 
 # BUILT WITH 🧰
 * [steveiliop56/tinyauth](https://github.com/steveiliop56/tinyauth)
@@ -183,4 +180,4 @@ docker pull quay.io/11notes/tinyauth:3.6.2
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 18.07.2025, 07:40:51 (CET)*
+*created 26.08.2025, 14:28:39 (CET)*
