@@ -1,21 +1,21 @@
 # ╔═════════════════════════════════════════════════════╗
 # ║                       SETUP                         ║
 # ╚═════════════════════════════════════════════════════╝
-  # GLOBAL
+# GLOBAL
   ARG APP_UID=1000 \
       APP_GID=1000 \
       BUILD_SRC=https://github.com/steveiliop56/tinyauth.git \
       BUILD_ROOT=/go/tinyauth
   ARG BUILD_BIN=${BUILD_ROOT}/tinyauth
 
-  # :: FOREIGN IMAGES
+# :: FOREIGN IMAGES
   FROM 11notes/distroless AS distroless
-  FROM 11notes/distroless:curl AS distroless-curl
+  FROM 11notes/distroless:localhealth AS distroless-localhealth
 
 # ╔═════════════════════════════════════════════════════╗
 # ║                       BUILD                         ║
 # ╚═════════════════════════════════════════════════════╝
-  # :: TINYAUTH
+# :: TINYAUTH FRONTEND
   FROM oven/bun:alpine AS frontend
   ARG APP_VERSION \
       BUILD_SRC \
@@ -33,7 +33,8 @@
     bun install; \
     bun run build;
 
-  FROM 11notes/go:1.24 AS build
+# :: TINYAUTH
+  FROM 11notes/go:1.25 AS build
   ARG APP_VERSION \
       BUILD_SRC \
       BUILD_ROOT \
@@ -47,7 +48,6 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
-    go mod tidy; \
     eleven go build ${BUILD_BIN} main.go; \
     eleven distroless ${BUILD_BIN};
   
@@ -55,7 +55,7 @@
 # ╔═════════════════════════════════════════════════════╗
 # ║                       IMAGE                         ║
 # ╚═════════════════════════════════════════════════════╝
-  # :: HEADER
+# :: HEADER
   FROM scratch
 
   # :: default arguments
@@ -87,7 +87,7 @@
 
 # :: HEALTH
   HEALTHCHECK --interval=5s --timeout=2s --start-period=5s \
-    CMD ["/usr/local/bin/curl", "-kILs", "--fail", "-o", "/dev/null", "http://localhost:3000/api/healthcheck"]
+    CMD ["/usr/local/bin/localhealth", "http://127.0.0.1:3000/api/healthcheck", "-I"]
 
 # :: EXECUTE
   USER ${APP_UID}:${APP_GID}
