@@ -27,7 +27,7 @@
 
   RUN set -ex; \
     git clone ${BUILD_SRC} -b v${APP_VERSION};
-  
+
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
     bun install; \
@@ -48,9 +48,20 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
+    sed -i 's|var Version = "development"|var Version = "'${APP_VERSION}'"|' ./internal/config/config.go;
+
+  RUN set -ex; \
+    cd ${BUILD_ROOT}; \
     eleven go build ${BUILD_BIN} main.go; \
     eleven distroless ${BUILD_BIN};
+
+# :: FILE SYSTEM
+  FROM alpine AS file-system
+  ARG APP_ROOT
   
+  RUN set -ex; \
+    mkdir -p /distroless${APP_ROOT}/var;
+
 
 # ╔═════════════════════════════════════════════════════╗
 # ║                       IMAGE                         ║
@@ -77,17 +88,23 @@
         APP_VERSION=${APP_VERSION} \
         APP_ROOT=${APP_ROOT}
 
-  # :: app specific defaults
-    ENV DISABLE_CONTINUE=true
+  # :: app specific environment
+    ENV RESOURCES_DIR=${APP_ROOT}/var \
+        DATABASE_PATH=${APP_ROOT}/var/tinyauth.db \
+        DISABLE_ANALYTICS=true
 
   # :: multi-stage
     COPY --from=distroless / /
     COPY --from=distroless-localhealth / /
     COPY --from=build /distroless/ /
+    COPY --from=file-system --chown=${APP_UID}:${APP_GID} /distroless/ /
+
+# :: PERSISTENT DATA
+  VOLUME ["${APP_ROOT}/var"]
 
 # :: HEALTH
   HEALTHCHECK --interval=5s --timeout=2s --start-period=5s \
-    CMD ["/usr/local/bin/localhealth", "http://127.0.0.1:3000/api/healthcheck", "-I"]
+    CMD ["/usr/local/bin/localhealth", "http://127.0.0.1:3000/api/health", "-I"]
 
 # :: EXECUTE
   USER ${APP_UID}:${APP_GID}

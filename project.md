@@ -1,4 +1,4 @@
-${{ content_synopsis }} This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security.
+${{ content_synopsis }} This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's call home function.
 
 ${{ content_uvp }} Good question! Because ...
 
@@ -16,12 +16,15 @@ If you value security, simplicity and optimizations to the extreme, then this im
 
 ${{ content_comparison }}
 
+${{ title_volumes }}
+* **${{ json_root }}/var** - Directory of SQLite database and static assets
+
 ${{ content_compose }}
 
 ${{ content_defaults }}
 
 ${{ content_environment }}
-| `DISABLE_CONTINUE` | Disables the continue button after successful auth | true |
+| `DISABLE_ANALYTICS` | Disables data collection by [steveiliop56](https://github.com/steveiliop56) | true |
 
 ${{ content_source }}
 
