@@ -1,4 +1,4 @@
-name: cron-update
+name: cron
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     - cron: "0 5 * * *"
 
 jobs:
-  cron-update:
+  update:
     runs-on: ubuntu-latest
 
     permissions:
@@ -20,18 +20,18 @@ jobs:
           ref: 'master'
           fetch-depth: 0
 
-      - name: cron-update / get latest version
+      - name: update / get latest version
         run: |
           echo "LATEST_VERSION=$(curl -s https://api.github.com/repos/steveiliop56/tinyauth/releases/latest | jq -r '.tag_name' | sed 's/v//')" >> "${GITHUB_ENV}"
           echo "LATEST_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --max-count=1` | sed 's/v//')" >> "${GITHUB_ENV}"
 
-      - name: cron-update / setup node
+      - name: update / setup node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '20'
       - run: npm i semver
 
-      - name: cron-update / compare latest with current version
+      - name: update / compare latest with current version
         uses: actions/github-script@62c3794a3eb6788d9a2a72b219504732c0c9a298
         with:
           script: |
@@ -87,7 +87,7 @@ jobs:
 
             core.info(inspect(repository.dot, {showHidden:false, depth:null, colors:true}));
 
-      - name: cron-update / checkout
+      - name: update / checkout
         id: checkout
         if: env.WORKFLOW_AUTO_UPDATE == 'true'
         run: |         
@@ -97,14 +97,14 @@ jobs:
           git commit -m "chore: auto upgrade to ${{ env.LATEST_VERSION }}"
           git push origin HEAD:master
 
-      - name: cron-update / tag
+      - name: update / tag
         if: env.WORKFLOW_AUTO_UPDATE == 'true' && steps.checkout.outcome == 'success'
         run: |         
           SHA256=$(git rev-list --branches --max-count=1)
           git tag -a v${{ env.WORKFLOW_NEW_TAG }} -m "v${{ env.WORKFLOW_NEW_TAG }}" ${SHA256}
           git push --follow-tags
 
-      - name: cron-update / build docker image
+      - name: update / build docker image
         if: env.WORKFLOW_AUTO_UPDATE == 'true' && steps.checkout.outcome == 'success'
         uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7
         with:
