@@ -1,16 +1,16 @@
-![banner](https://github.com/11notes/defaults/blob/main/static/img/banner.png?raw=true)
+![banner](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/banner/README.png)
 
 # TINYAUTH
-![size](https://img.shields.io/docker/image-size/11notes/tinyauth/4.0.1?color=0eb305)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)![version](https://img.shields.io/docker/v/11notes/tinyauth/4.0.1?color=eb7a09)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)![pulls](https://img.shields.io/docker/pulls/11notes/tinyauth?color=2b75d6)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)[<img src="https://img.shields.io/github/issues/11notes/docker-TINYAUTH?color=7842f5">](https://github.com/11notes/docker-TINYAUTH/issues)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
+![size](https://img.shields.io/badge/image_size-23MB-green?color=%2338ad2d)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![pulls](https://img.shields.io/docker/pulls/11notes/tinyauth?color=2b75d6)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)[<img src="https://img.shields.io/github/issues/11notes/docker-tinyauth?color=7842f5">](https://github.com/11notes/docker-tinyauth/issues)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
 
 Run tinyauth rootless, distroless and truly tiny.
 
 # INTRODUCTION 📢
 
-Tinyauth is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.
+[Tinyauth](https://github.com/steveiliop56/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.
 
 # SYNOPSIS 📖
-**What can I do with this?** This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security.
+**What can I do with this?** This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's call home function.
 
 # UNIQUE VALUE PROPOSITION 💶
 **Why should I run this image and not the other image(s) that already exist?** Good question! Because ...
@@ -35,13 +35,24 @@ Below you find a comparison between this image and the most used or original one
 | 11notes/tinyauth:4.0.1 | 23MB | 1000:1000 | ✅ | amd64, arm64 |
 | steveiliop56/tinyauth | 42MB | 0:0 | ❌ | amd64, arm64 |
 
+# VOLUMES 📁
+* **/tinyauth/var** - Directory of SQLite database and static assets
+
 # COMPOSE ✂️
 ```yaml
-name: "proxy"
+name: "auth"
+
+x-lockdown: &lockdown
+  # prevents write access to the image itself
+  read_only: true
+  # prevents any process within the container to gain more privileges
+  security_opt:
+    - "no-new-privileges=true"
+
 services:
   tinyauth:
     image: "11notes/tinyauth:4.0.1"
-    read_only: true
+    <<: *lockdown
     environment:
       APP_URL: "https://${FQDN_TINYAUTH}"
       # secret must be a 32 Byte long string (32 characters)
@@ -56,29 +67,33 @@ services:
       - "traefik.http.routers.tinyauth.service=tinyauth"
       - "traefik.http.services.tinyauth.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.tinyauth.forwardauth.address=http://tinyauth:3000/api/auth/traefik"
+    volumes:
+      - "tinyauth.var:/tinyauth/var"
     networks:
       backend:
 
-  # this iamge is used to expose the docker socket rootless, distroless and read-only
-  # you can find out more on https://github.com/11notes/docker-socket-proxy
   socket-proxy:
-    image: "11notes/socket-proxy:2.1.3"
-    read_only: true
-    user: "0:0"
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-socket-proxy
+    image: "11notes/socket-proxy:2.1.6"
+    <<: *lockdown
+    user: "0:103"
     volumes:
       - "/run/docker.sock:/run/docker.sock:ro"
       - "socket-proxy:/run/proxy"
     restart: "always"
 
   traefik:
-    image: "11notes/traefik:3.2.0"
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-traefik
+    image: "11notes/traefik:3.5.4"
+    <<: *lockdown
     depends_on:
       socket-proxy:
         condition: "service_healthy"
         restart: true
     command:
       # this is an example configuration, do not use in production
-      # consult https://github.com/11notes/docker-traefik for a proper and save config!
       - "--global.checkNewVersion=false"
       - "--global.sendAnonymousUsage=false"
       - "--api.dashboard=true"
@@ -115,6 +130,7 @@ services:
       backend:
 
 volumes:
+  tinyauth.var:
   socket-proxy:
 
 networks:
@@ -122,7 +138,7 @@ networks:
   backend:
     internal: true
 ```
-To find out how you can change the default UID/GID of this container image, consult the [how-to.changeUIDGID](https://github.com/11notes/RTFM/blob/main/linux/container/image/11notes/how-to.changeUIDGID.md#change-uidgid-the-correct-way) section of my [RTFM](https://github.com/11notes/RTFM)
+To find out how you can change the default UID/GID of this container image, consult the [RTFM](https://github.com/11notes/RTFM/blob/main/linux/container/image/11notes/how-to.changeUIDGID.md#change-uidgid-the-correct-way).
 
 # DEFAULT SETTINGS 🗃️
 | Parameter | Value | Description |
@@ -137,7 +153,7 @@ To find out how you can change the default UID/GID of this container image, cons
 | --- | --- | --- |
 | `TZ` | [Time Zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) | |
 | `DEBUG` | Will activate debug option for container image and app (if available) | |
-| `DISABLE_CONTINUE` | Disables the continue button after successful auth | true |
+| `DISABLE_ANALYTICS` | Disables data collection by [steveiliop56](https://github.com/steveiliop56) | true |
 
 # MAIN TAGS 🏷️
 These are the main tags for the image. There is also a tag for each commit and its shorthand sha256 value.
@@ -145,7 +161,7 @@ These are the main tags for the image. There is also a tag for each commit and i
 * [4.0.1](https://hub.docker.com/r/11notes/tinyauth/tags?name=4.0.1)
 
 ### There is no latest tag, what am I supposed to do about updates?
-It is of my opinion that the ```:latest``` tag is dangerous. Many times, I’ve introduced **breaking** changes to my images. This would have messed up everything for some people. If you don’t want to change the tag to the latest [semver](https://semver.org/), simply use the short versions of [semver](https://semver.org/). Instead of using ```:4.0.1``` you can use ```:4``` or ```:4.0```. Since on each new version these tags are updated to the latest version of the software, using them is identical to using ```:latest``` but at least fixed to a major or minor version.
+It is my opinion that the ```:latest``` tag is a bad habbit and should not be used at all. Many developers introduce **breaking changes** in new releases. This would messed up everything for people who use ```:latest```. If you don’t want to change the tag to the latest [semver](https://semver.org/), simply use the short versions of [semver](https://semver.org/). Instead of using ```:4.0.1``` you can use ```:4``` or ```:4.0```. Since on each new version these tags are updated to the latest version of the software, using them is identical to using ```:latest``` but at least fixed to a major or minor version. Which in theory should not introduce breaking changes.
 
 If you still insist on having the bleeding edge release of this app, simply use the ```:rolling``` tag, but be warned! You will get the latest version of the app instantly, regardless of breaking changes or security issues or what so ever. You do this at your own risk!
 
@@ -157,7 +173,7 @@ docker pull quay.io/11notes/tinyauth:4.0.1
 ```
 
 # SOURCE 💾
-* [11notes/tinyauth](https://github.com/11notes/docker-TINYAUTH)
+* [11notes/tinyauth](https://github.com/11notes/docker-tinyauth)
 
 # PARENT IMAGE 🏛️
 > [!IMPORTANT]
@@ -181,4 +197,4 @@ docker pull quay.io/11notes/tinyauth:4.0.1
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 17.10.2025, 11:15:11 (CET)*
+*created 05.11.2025, 23:16:06 (CET)*
