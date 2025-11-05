@@ -35,7 +35,7 @@ services:
     # https://github.com/11notes/docker-socket-proxy
     image: "11notes/socket-proxy:2.1.6"
     <<: *lockdown
-    user: "0:103"
+    user: "0:0"
     volumes:
       - "/run/docker.sock:/run/docker.sock:ro"
       - "socket-proxy:/run/proxy"
