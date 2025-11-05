@@ -44,7 +44,6 @@
     git clone ${BUILD_SRC} -b v${APP_VERSION};
 
   COPY --from=frontend /home/bun/app/tinyauth/frontend/dist ${BUILD_ROOT}/internal/assets/dist
-  COPY ./build /
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
