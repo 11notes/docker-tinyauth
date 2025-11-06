@@ -47,7 +47,9 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
-    sed -i 's|var Version = "development"|var Version = "'${APP_VERSION}'"|' ./internal/config/config.go;
+    sed -i 's|var Version = "development"|var Version = "'${APP_VERSION}'"|' ./internal/config/config.go; \
+    # disable telemetry
+    sed -i 's|go app.heartbeat()|// go app.heartbeat()|' ./internal/bootstrap/app_bootstrap.go;
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \

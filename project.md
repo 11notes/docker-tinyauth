@@ -1,4 +1,4 @@
-${{ content_synopsis }} This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's call home function.
+${{ content_synopsis }} This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's telemetry in [code](https://github.com/11notes/docker-tinyauth/blob/master/arch.dockerfile#L51).
 
 ${{ content_uvp }} Good question! Because ...
 
@@ -24,7 +24,6 @@ ${{ content_compose }}
 ${{ content_defaults }}
 
 ${{ content_environment }}
-| `DISABLE_ANALYTICS` | Disables data collection by [steveiliop56](https://github.com/steveiliop56) | true |
 
 ${{ content_source }}
 
