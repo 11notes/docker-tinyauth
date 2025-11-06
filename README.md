@@ -77,7 +77,7 @@ services:
     # https://github.com/11notes/docker-socket-proxy
     image: "11notes/socket-proxy:2.1.6"
     <<: *lockdown
-    user: "0:103"
+    user: "0:0"
     volumes:
       - "/run/docker.sock:/run/docker.sock:ro"
       - "socket-proxy:/run/proxy"
@@ -197,4 +197,4 @@ docker pull quay.io/11notes/tinyauth:4.0.1
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 05.11.2025, 23:16:06 (CET)*
+*created 05.11.2025, 23:25:15 (CET)*
