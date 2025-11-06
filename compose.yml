@@ -37,21 +37,23 @@ services:
     <<: *lockdown
     user: "0:0"
     volumes:
-      - "/run/docker.sock:/run/docker.sock:ro"
-      - "socket-proxy:/run/proxy"
+      - "/run/docker.sock:/run/docker.sock:ro" 
+      - "socket-proxy.run:/run/proxy"
     restart: "always"
 
   traefik:
     # for more information about this image checkout:
     # https://github.com/11notes/docker-traefik
-    image: "11notes/traefik:3.5.4"
-    <<: *lockdown
     depends_on:
       socket-proxy:
         condition: "service_healthy"
         restart: true
+    image: "11notes/traefik:3.5.4"
+    <<: *lockdown
     command:
       # this is an example configuration, do not use in production
+      - "--ping=true"
+      - "--ping.terminatingStatusCode=204"
       - "--global.checkNewVersion=false"
       - "--global.sendAnonymousUsage=false"
       - "--api.dashboard=true"
@@ -69,7 +71,7 @@ services:
       frontend:
       backend:
     volumes:
-      - "socket-proxy:/var/run"
+      - "socket-proxy.run:/var/run"
     sysctls:
       net.ipv4.ip_unprivileged_port_start: 80
     restart: "always"
@@ -81,15 +83,15 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`${FQDN_WHOAMI}`)"
       - "traefik.http.routers.whoami.entrypoints=https"
       - "traefik.http.routers.whoami.tls=true"
-      - "traefik.http.routers.whoami.middlewares=tinyauth"
-      - "traefik.http.routers.whoami.service=whoami"
+      - "traefik.http.routers.whoami.middlewares=tinyauth@docker"
+      - "traefik.http.routers.whoami.service=whoami@docker"
       - "traefik.http.services.whoami.loadbalancer.server.port=80"
     networks:
       backend:
 
 volumes:
   tinyauth.var:
-  socket-proxy:
+  socket-proxy.run:
 
 networks:
   frontend:
