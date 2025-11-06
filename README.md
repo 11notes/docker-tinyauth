@@ -10,7 +10,7 @@ Run tinyauth rootless, distroless and truly tiny.
 [Tinyauth](https://github.com/steveiliop56/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.
 
 # SYNOPSIS 📖
-**What can I do with this?** This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's call home function.
+**What can I do with this?** This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's telemetry in [code](https://github.com/11notes/docker-tinyauth/blob/master/arch.dockerfile#L51).
 
 # UNIQUE VALUE PROPOSITION 💶
 **Why should I run this image and not the other image(s) that already exist?** Good question! Because ...
@@ -79,21 +79,23 @@ services:
     <<: *lockdown
     user: "0:0"
     volumes:
-      - "/run/docker.sock:/run/docker.sock:ro"
-      - "socket-proxy:/run/proxy"
+      - "/run/docker.sock:/run/docker.sock:ro" 
+      - "socket-proxy.run:/run/proxy"
     restart: "always"
 
   traefik:
     # for more information about this image checkout:
     # https://github.com/11notes/docker-traefik
-    image: "11notes/traefik:3.5.4"
-    <<: *lockdown
     depends_on:
       socket-proxy:
         condition: "service_healthy"
         restart: true
+    image: "11notes/traefik:3.5.4"
+    <<: *lockdown
     command:
       # this is an example configuration, do not use in production
+      - "--ping=true"
+      - "--ping.terminatingStatusCode=204"
       - "--global.checkNewVersion=false"
       - "--global.sendAnonymousUsage=false"
       - "--api.dashboard=true"
@@ -111,7 +113,7 @@ services:
       frontend:
       backend:
     volumes:
-      - "socket-proxy:/var/run"
+      - "socket-proxy.run:/var/run"
     sysctls:
       net.ipv4.ip_unprivileged_port_start: 80
     restart: "always"
@@ -123,15 +125,15 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`${FQDN_WHOAMI}`)"
       - "traefik.http.routers.whoami.entrypoints=https"
       - "traefik.http.routers.whoami.tls=true"
-      - "traefik.http.routers.whoami.middlewares=tinyauth"
-      - "traefik.http.routers.whoami.service=whoami"
+      - "traefik.http.routers.whoami.middlewares=tinyauth@docker"
+      - "traefik.http.routers.whoami.service=whoami@docker"
       - "traefik.http.services.whoami.loadbalancer.server.port=80"
     networks:
       backend:
 
 volumes:
   tinyauth.var:
-  socket-proxy:
+  socket-proxy.run:
 
 networks:
   frontend:
@@ -153,7 +155,6 @@ To find out how you can change the default UID/GID of this container image, cons
 | --- | --- | --- |
 | `TZ` | [Time Zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) | |
 | `DEBUG` | Will activate debug option for container image and app (if available) | |
-| `DISABLE_ANALYTICS` | Disables data collection by [steveiliop56](https://github.com/steveiliop56) | true |
 
 # MAIN TAGS 🏷️
 These are the main tags for the image. There is also a tag for each commit and its shorthand sha256 value.
@@ -197,4 +198,4 @@ docker pull quay.io/11notes/tinyauth:4.0.1
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 05.11.2025, 23:25:15 (CET)*
+*created 06.11.2025, 07:33:46 (CET)*
