@@ -1,12 +1,13 @@
 {
   "image": "11notes/tinyauth",
+  "platform":"amd64,arm64",
   "name": "tinyauth",
   "root": "/tinyauth",
   "semver": {
     "version": "4.1.0"
   },
   "readme": {
-    "description": "Run tinyauth rootless, distroless and truly tiny.",
+    "description": "run tinyauth rootless and distroless.",
     "introduction": "[Tinyauth](https://github.com/steveiliop56/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.",
     "built": {
       "steveiliop56/tinyauth": "https://github.com/steveiliop56/tinyauth"
