@@ -4,7 +4,7 @@
   "name": "tinyauth",
   "root": "/tinyauth",
   "semver": {
-    "version": "5.0.0"
+    "version": "5.0.1"
   },
   "readme": {
     "description": "run tinyauth rootless and distroless.",
