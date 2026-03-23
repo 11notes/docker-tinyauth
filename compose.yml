@@ -12,11 +12,8 @@ services:
     image: "11notes/tinyauth:5.0.4"
     <<: *lockdown
     environment:
-      APP_URL: "https://${FQDN_TINYAUTH}"
-      # secret must be a 32 Byte long string (32 characters)
-      SECRET: ${SECRET}
-      # admin / admin, please do not use in production!
-      USERS: "admin:$$2y$$12$$zzekhr74SUez9vo8TK2Be.mJ4EMX44k7whOogQo4F/2i84a6Rl6U6"
+      TINYAUTH_APPURL: "https://${FQDN_TINYAUTH}"
+      TINYAUTH_AUTH_USERS: "admin:$$2y$$12$$zzekhr74SUez9vo8TK2Be.mJ4EMX44k7whOogQo4F/2i84a6Rl6U6"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tinyauth.rule=Host(`${FQDN_TINYAUTH}`)"
@@ -35,7 +32,7 @@ services:
     # https://github.com/11notes/docker-socket-proxy
     image: "11notes/socket-proxy:2.1.6"
     <<: *lockdown
-    user: "0:0"
+    user: "0:103"
     volumes:
       - "/run/docker.sock:/run/docker.sock:ro" 
       - "socket-proxy.run:/run/proxy"

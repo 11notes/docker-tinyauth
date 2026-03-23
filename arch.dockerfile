@@ -5,19 +5,21 @@
   ARG APP_UID= \
       APP_GID= \
       APP_GO_VERSION=0.0 \
-      BUILD_SRC=https://github.com/steveiliop56/tinyauth.git \
+      BUILD_SRC=steveiliop56/tinyauth.git \
       BUILD_ROOT=/go/tinyauth
   ARG BUILD_BIN=${BUILD_ROOT}/tinyauth
 
 # :: FOREIGN IMAGES
   FROM 11notes/distroless AS distroless
   FROM 11notes/distroless:localhealth AS distroless-localhealth
+  FROM 11notes/util AS util
 
 # ╔═════════════════════════════════════════════════════╗
 # ║                       BUILD                         ║
 # ╚═════════════════════════════════════════════════════╝
 # :: TINYAUTH FRONTEND
   FROM oven/bun:alpine AS frontend
+  COPY --from=util / /
   ARG APP_VERSION \
       BUILD_SRC \
       BUILD_ROOT=/home/bun/app/tinyauth/frontend
@@ -27,7 +29,7 @@
       git;
 
   RUN set -ex; \
-    git clone ${BUILD_SRC} -b v${APP_VERSION};
+    eleven git clone ${BUILD_SRC} v${APP_VERSION};
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
@@ -36,13 +38,14 @@
 
 # :: TINYAUTH
   FROM 11notes/go:${APP_GO_VERSION} AS build
+  COPY --from=util / /
   ARG APP_VERSION \
       BUILD_SRC \
       BUILD_ROOT \
       BUILD_BIN
 
   RUN set -ex; \
-    git clone ${BUILD_SRC} -b v${APP_VERSION};
+    eleven git clone ${BUILD_SRC} v${APP_VERSION};
 
   COPY --from=frontend /home/bun/app/tinyauth/frontend/dist ${BUILD_ROOT}/internal/assets/dist
 
@@ -54,7 +57,7 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
-    eleven go build ${BUILD_BIN} main.go; \
+    eleven go build ${BUILD_BIN} ./cmd/tinyauth; \
     eleven distroless ${BUILD_BIN};
 
 # :: FILE SYSTEM
@@ -91,9 +94,9 @@
         APP_ROOT=${APP_ROOT}
 
   # :: app specific environment
-    ENV RESOURCES_DIR=${APP_ROOT}/var \
-        DATABASE_PATH=${APP_ROOT}/var/tinyauth.db \
-        DISABLE_ANALYTICS=true
+    ENV TINYAUTH_RESOURCES_PATH=${APP_ROOT}/var \
+        TINYAUTH_DATABASE_PATH=${APP_ROOT}/var/tinyauth.db \
+        TINYAUTH_ANALYTICS_ENABLED=false
 
   # :: multi-stage
     COPY --from=distroless / /
