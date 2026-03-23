@@ -1,10 +1,10 @@
 {
   "image": "11notes/tinyauth",
-  "platform":"amd64,arm64",
+  "platform": "amd64,arm64",
   "name": "tinyauth",
   "root": "/tinyauth",
   "semver": {
-    "version": "4.1.0"
+    "version": "5.0.4"
   },
   "readme": {
     "description": "run tinyauth rootless and distroless.",
