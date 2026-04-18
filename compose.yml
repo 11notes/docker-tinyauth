@@ -9,7 +9,7 @@ x-lockdown: &lockdown
 
 services:
   tinyauth:
-    image: "11notes/tinyauth:5.0.6"
+    image: "11notes/tinyauth:5.0.7"
     <<: *lockdown
     environment:
       TINYAUTH_APPURL: "https://${FQDN_TINYAUTH}"
