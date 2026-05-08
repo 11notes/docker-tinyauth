@@ -40,7 +40,7 @@ jobs:
             (async()=>{
               try{
                 const etc = JSON.parse(Buffer.from('${{ github.event.inputs.etc }}', 'base64').toString('ascii'));
-                core.exportVariable('WORKFLOW_BUILD_BASE64JSON', Buffer.from(JSON.stringify({build:etc?.build})).toString('base64'));
+                core.exportVariable('WORKFLOW_BUILD_BASE64JSON', Buffer.from(JSON.stringify(etc)).toString('base64'));
                 if(etc?.unraid){
                   core.exportVariable(`WORKFLOW_BUILD_UNRAID`, `${etc.unraid}`);
                   core.exportVariable('WORKFLOW_BUILD_UNRAID_BASE64JSON', Buffer.from(JSON.stringify({semversuffix:"unraid", uid:99, gid:100, build:etc?.build})).toString('base64'));
@@ -56,29 +56,30 @@ jobs:
 
       # DEFAULT
       - name: build container image
-        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7
+        id: build
+        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7 # v4.0.0
         with:
-          workflow: docker.yml
-          wait-for-completion: false
+          workflow: org.container.yml
+          wait-for-completion: true
           token: "${{ secrets.REPOSITORY_TOKEN }}"
           inputs: '{ "release":"${{ github.event.inputs.release }}", "readme":"${{ github.event.inputs.readme }}", "run-name":"build ${{ github.event.inputs.ref }}", "etc":"${{ env.WORKFLOW_BUILD_BASE64JSON }}" }'
 
       # UNRAID
       - name: build container image for unraid
-        if: env.WORKFLOW_BUILD_UNRAID == 'true'
-        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7
+        if: env.WORKFLOW_BUILD_UNRAID == 'true' && steps.build.outputs.workflow-conclusion == 'success'
+        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7 # v4.0.0
         with:
-          workflow: docker.yml
+          workflow: org.container.yml
           wait-for-completion: false
           token: "${{ secrets.REPOSITORY_TOKEN }}"
           inputs: '{ "release":"false", "readme":"false", "run-name":"build unraid ${{ github.event.inputs.ref }}", "etc":"${{ env.WORKFLOW_BUILD_UNRAID_BASE64JSON }}" }'
 
       # NOBODY
       - name: build container image for nobody
-        if: env.WORKFLOW_BUILD_NOBODY == 'true'
-        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7
+        if: env.WORKFLOW_BUILD_NOBODY == 'true' && steps.build.outputs.workflow-conclusion == 'success'
+        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7 # v4.0.0
         with:
-          workflow: docker.yml
+          workflow: org.container.yml
           wait-for-completion: false
           token: "${{ secrets.REPOSITORY_TOKEN }}"
           inputs: '{ "release":"false", "readme":"false", "run-name":"build nobody ${{ github.event.inputs.ref }}", "etc":"${{ env.WORKFLOW_BUILD_NOBODY_BASE64JSON }}" }'
