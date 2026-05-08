@@ -7,7 +7,7 @@ run tinyauth rootless and distroless.
 
 # INTRODUCTION 📢
 
-[Tinyauth](https://github.com/steveiliop56/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.
+[Tinyauth](https://github.com/tinyauthapp/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.
 
 # SYNOPSIS 📖
 **What can I do with this?** This image will run tinyauth [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md) for more security, including disabling it's telemetry in [code](https://github.com/11notes/docker-tinyauth/blob/master/arch.dockerfile#L51).
@@ -33,7 +33,6 @@ Below you find a comparison between this image and the most used or original one
 | **image** | **size on disk** | **init default as** | **[distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md)** | supported architectures
 | ---: | ---: | :---: | :---: | :---: |
 | 11notes/tinyauth | 25MB | 1000:1000 | ✅ | amd64, arm64 |
-| steveiliop56/tinyauth | 42MB | 0:0 | ❌ | amd64, arm64 |
 
 # VOLUMES 📁
 * **/tinyauth/var** - Directory of SQLite database and static assets
@@ -189,7 +188,7 @@ This image supports nobody by default. Simply add **-nobody** to any tag and the
 >* [11notes/distroless:localhealth](https://github.com/11notes/docker-distroless/blob/master/localhealth.dockerfile) - app to execute HTTP requests only on 127.0.0.1
 
 # BUILT WITH 🧰
-* [steveiliop56/tinyauth](https://github.com/steveiliop56/tinyauth)
+* [tinyauthapp/tinyauth](https://github.com/tinyauthapp/tinyauth)
 
 # GENERAL TIPS 📌
 > [!TIP]
@@ -203,4 +202,4 @@ This image supports nobody by default. Simply add **-nobody** to any tag and the
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-tinyauth/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-tinyauth/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-tinyauth/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 18.04.2026, 08:15:47 (CET)*
+*created 08.05.2026, 10:21:36 (CET)*
