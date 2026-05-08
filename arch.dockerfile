@@ -5,7 +5,7 @@
   ARG APP_UID= \
       APP_GID= \
       APP_GO_VERSION=0.0 \
-      BUILD_SRC=steveiliop56/tinyauth.git \
+      BUILD_SRC=tinyauthapp/tinyauth.git \
       BUILD_ROOT=/go/tinyauth
   ARG BUILD_BIN=${BUILD_ROOT}/tinyauth
 

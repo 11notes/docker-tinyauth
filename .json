@@ -8,9 +8,9 @@
   },
   "readme": {
     "description": "run tinyauth rootless and distroless.",
-    "introduction": "[Tinyauth](https://github.com/steveiliop56/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.",
+    "introduction": "[Tinyauth](https://github.com/tinyauthapp/tinyauth) (created by [steveiliop56](https://github.com/steveiliop56)) is a simple authentication middleware that adds a simple login screen or OAuth with Google, Github and any provider to all of your docker apps. It supports all the popular proxies like Traefik, Nginx and Caddy.",
     "built": {
-      "steveiliop56/tinyauth": "https://github.com/steveiliop56/tinyauth"
+      "tinyauthapp/tinyauth": "https://github.com/tinyauthapp/tinyauth"
     },
     "distroless": {
       "layers": [
@@ -20,7 +20,7 @@
     },
     "comparison": {
       "images": [
-        "ghcr.io/steveiliop56/tinyauth"
+        "ghcr.io/tinyauthapp/tinyauth"
       ]
     }
   }
