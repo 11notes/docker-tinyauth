@@ -23,5 +23,7 @@
         "ghcr.io/tinyauthapp/tinyauth"
       ]
     }
-  }
+  },
+  "unraid": true,
+  "nobody": true
 }
