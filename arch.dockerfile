@@ -18,14 +18,15 @@
 # ║                       BUILD                         ║
 # ╚═════════════════════════════════════════════════════╝
 # :: TINYAUTH FRONTEND
-  FROM oven/bun:alpine AS frontend
+  FROM node:lts-alpine AS frontend
   COPY --from=util / /
   ARG APP_VERSION \
       BUILD_SRC \
-      BUILD_ROOT=/home/bun/app/tinyauth/frontend
+      BUILD_ROOT=/tinyauth/frontend
 
   RUN set -ex; \
     apk --update --no-cache add \
+      pnpm \
       git;
 
   RUN set -ex; \
@@ -33,8 +34,13 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
-    bun install; \
-    bun run build;
+    for SRC in *; do \
+      case ${SRC} in \
+        package.json|pnpm-lock.yaml|public|src|eslint.config.js|index.html|tsconfig.json|tsconfig.app.json|tsconfig.node.json|vite.config.ts);; \
+        *) rm -rf ${BUILD_ROOT}/${SRC};; \
+      esac; \
+    done; \
+    pnpm run build;
 
 # :: TINYAUTH
   FROM 11notes/go:${APP_GO_VERSION} AS build
@@ -47,7 +53,7 @@
   RUN set -ex; \
     eleven git clone ${BUILD_SRC} v${APP_VERSION};
 
-  COPY --from=frontend /home/bun/app/tinyauth/frontend/dist ${BUILD_ROOT}/internal/assets/dist
+  COPY --from=frontend /tinyauth/frontend/dist ${BUILD_ROOT}/internal/assets/dist
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
